@@ -34,7 +34,7 @@ class CardContainer(
     private var cardContainerAdapter: CardContainerAdapter? = null
 
     var margin = 20.px
-    var marginTop = 10.px
+    var marginBottom = 10.px
     var maxStackSize = 5
 
     private var mainContainer: FrameLayout? = null
@@ -149,9 +149,9 @@ class CardContainer(
     private fun viewWithNewMarginAnimation(v: View) {
         val lp = v.layoutParams as ConstraintLayout.LayoutParams
         val newLeftMargin = lp.leftMargin - margin
-        val newTopMargin = lp.topMargin + (if (nextCondition()) marginTop else 0)
+        val newTopMargin = lp.topMargin - margin
         val newRightMargin = lp.rightMargin - margin
-        val newBottomMargin = lp.bottomMargin - margin
+        val newBottomMargin = lp.bottomMargin + (if (nextCondition()) marginBottom else 0)
 
         val oldLeftMargin = lp.leftMargin
         val oldTopMargin = lp.topMargin
@@ -175,9 +175,9 @@ class CardContainer(
     private fun viewWithNewMarginAnimationForNewItems(v: View, i: Int) {
         val lp = v.layoutParams as ConstraintLayout.LayoutParams
         val newLeftMargin = margin * (maxStackSize - i)
-        val newTopMargin = (i + 1) * marginTop
+        val newTopMargin = margin * (maxStackSize - i)
         val newRightMargin = margin * (maxStackSize - i)
-        val newBottomMargin = margin * (maxStackSize - i)
+        val newBottomMargin = (i + 1) * marginBottom
 
         val oldLeftMargin = lp.leftMargin
         val oldTopMargin = lp.topMargin
@@ -356,9 +356,9 @@ class CardContainer(
             val card = childCard.card
             (card.layoutParams as ConstraintLayout.LayoutParams).setMargins(
                 margin * i,
-                marginTop * (size + 1 - i),
                 margin * i,
-                margin * i
+                margin * i,
+                marginBottom * (size + 1 - i),
             )
             card.elevation = (size + 1 - i).toFloat()
             holder.addView(cardContainerAdapter.getView(i - 1))
@@ -382,9 +382,9 @@ class CardContainer(
             val card = childCard.card
             (card.layoutParams as ConstraintLayout.LayoutParams).setMargins(
                 margin * (viewList.size + 1),
-                marginTop,
                 margin * (viewList.size + 1),
-                margin * (viewList.size + 1)
+                margin * (viewList.size + 1),
+                marginBottom,
             )
             card.elevation = 1.toFloat()
             holder.addView(cardContainerAdapter?.getView(count))
@@ -408,9 +408,9 @@ class CardContainer(
                 val card = childCard.card
                 (card.layoutParams as ConstraintLayout.LayoutParams).setMargins(
                     margin * (viewList.size + 1),
-                    marginTop * (size + 1 - i),
                     margin * (viewList.size + 1),
-                    margin * (viewList.size + 1)
+                    margin * (viewList.size + 1),
+                    marginBottom * (size + 1 - i),
                 )
                 card.elevation = 1F
                 holder.addView(cardContainerAdapter?.getView(i))

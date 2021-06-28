@@ -46,9 +46,9 @@ class NewsTinderFragment : Fragment(R.layout.fragment_news_tinder) {
 
         })
 
-        cardContainer.maxStackSize = 3
-        cardContainer.marginTop = 13.px
-        cardContainer.margin = 20.px
+        cardContainer.maxStackSize = 2
+        cardContainer.marginBottom = 20.px
+        cardContainer.margin = 24.px
 
         cardContainer.addFooterView(generateFooterView())
         adapter = NewsTinderAdapter(requireContext())
