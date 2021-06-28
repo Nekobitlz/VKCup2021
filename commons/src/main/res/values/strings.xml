@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_error">Произошла ошибка!\nПожалуйста,попробуйте позже</string>
+    <string name="retry">Повторить</string>
+
+    <string name="just_now">Только что</string>
+    <string name="minute_ago">Минуту назад</string>
+    <string name="an_minute_ago">%1$d минут назад</string>
+    <string name="hour_ago">часов назад</string>
+    <string name="an_hour_ago">%1$d часов назад</string>
+    <string name="yesterday">вчера</string>
+    <string name="an_day_ago">%1$d дней назад</string>
+</resources>

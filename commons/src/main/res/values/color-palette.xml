@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="pink_light">#FF2D55</color>
+    <color name="pink_dark">#FF375F</color>
+    <color name="pure_black">#000000</color>
+    <color name="pure_white">#FFFFFF</color>
+    <color name="shy_red">#D55268</color>
+    <color name="deep_blue">#27326B</color>
+    <color name="forest_green">#05734E</color>
+    <color name="lime_green">#00B503</color>
+    <color name="orange">#EB6A28</color>
+    <color name="bright_yellow">#FFD91A</color>
+    <color name="so_pink">#FE5F50</color>
+    <color name="gold">#FFB829</color>
+    <color name="purple">#8E3C8E</color>
+    <color name="sky_light">#A5E5F2</color>
+</resources>
