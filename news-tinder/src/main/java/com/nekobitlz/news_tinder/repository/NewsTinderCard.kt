@@ -1,6 +1,7 @@
-package com.nekobitlz.news_tinder
+package com.nekobitlz.news_tinder.repository
 
-data class TinderContactCardModel(
+data class NewsTinderCard(
+    val id: Int?,
     val name: String?,
     val title: String?,
     val date: Int?,

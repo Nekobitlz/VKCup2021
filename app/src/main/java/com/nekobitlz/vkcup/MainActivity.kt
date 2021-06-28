@@ -3,7 +3,7 @@ package com.nekobitlz.vkcup
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.nekobitlz.news_tinder.NewsTinderActivity
+import com.nekobitlz.news_tinder.Activity
 import com.nekobitlz.vkcup.databinding.ActivityMainBinding
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKAccessToken
@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val callback = object: VKAuthCallback {
             override fun onLogin(token: VKAccessToken) {
-                val myIntent = Intent(this@MainActivity, NewsTinderActivity::class.java)
+                val myIntent = Intent(this@MainActivity, Activity::class.java)
                 startActivity(myIntent)
             }
 

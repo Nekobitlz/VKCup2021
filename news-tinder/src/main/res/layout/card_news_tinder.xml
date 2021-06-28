@@ -95,14 +95,18 @@
         android:layout_marginStart="4dp"
         android:drawableStart="@drawable/like_outline_24"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/tv_comments_count"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        tools:text="8" />
+        tools:text="8123213123123123123" />
 
     <TextView
         android:id="@+id/tv_comments_count"
         style="@style/ActionButtonsStyle"
         android:drawableStart="@drawable/comment_outline_24"
         app:layout_constraintBaseline_toBaselineOf="@id/tv_like_count"
+        app:layout_constraintEnd_toStartOf="@id/tv_share_count"
         app:layout_constraintStart_toEndOf="@id/tv_like_count" />
 
     <TextView
@@ -114,5 +118,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@id/tv_comments_count"
-        tools:text="8" />
+        tools:text="8123123213123123" />
 </androidx.constraintlayout.widget.ConstraintLayout>

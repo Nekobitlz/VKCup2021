@@ -1,31 +1,24 @@
-package com.nekobitlz.news_tinder
+package com.nekobitlz.news_tinder.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.nekobitlz.news_tinder.repository.NewsTinderCard
 import com.nekobitlz.news_tinder.repository.NewsTinderRepository
 
-class TinderContactViewModel : ViewModel() {
-
-    private val stream = MutableLiveData<TinderContactModel>()
+class NewsTinderViewModel : ViewModel() {
 
     private val repository = NewsTinderRepository()
 
-    val modelStream: LiveData<TinderContactModel>
-        get() = stream
-
-    private var currentIndex = 0
-
-    private var data = listOf<TinderContactCardModel>()
-    private val topCard
-        get() = if (data.isNotEmpty()) data[currentIndex % data.size] else null
-    private val bottomCard
-        get() = if (data.isNotEmpty()) data[(currentIndex + 1) % data.size] else null
+    private val _models = MutableLiveData<List<NewsTinderCard>>()
+    val models: LiveData<List<NewsTinderCard>>
+        get() = _models
 
     init {
         repository.getNews().map { items ->
             items.map {
-                TinderContactCardModel(
+                NewsTinderCard(
+                    it.newsfeedItemWallpost.postId,
                     if (it.user == null) it.group?.name else it.user.firstName + " " + it.user.lastName,
                     it.newsfeedItemWallpost.text,
                     it.newsfeedItemWallpost.date,
@@ -42,23 +35,7 @@ class TinderContactViewModel : ViewModel() {
                 )
             }
         }.subscribe {
-            data = it
-            updateCards()
+            _models.postValue(it)
         }
     }
-
-    fun swipe() {
-        currentIndex += 1
-        updateCards()
-    }
-
-    private fun updateCards() {
-        if (topCard != null && bottomCard != null) {
-            stream.value = TinderContactModel(
-                cardTop = topCard!!,
-                cardBottom = bottomCard!!
-            )
-        }
-    }
-
 }

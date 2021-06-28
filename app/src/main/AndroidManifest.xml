@@ -19,7 +19,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.nekobitlz.news_tinder.NewsTinderActivity" />
+        <activity android:name="com.nekobitlz.news_tinder.Activity" />
     </application>
 
 </manifest>
