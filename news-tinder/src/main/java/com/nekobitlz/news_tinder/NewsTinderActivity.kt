@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.nekobitlz.news_tinder.view.NewsTinderFragment
 
-class Activity : AppCompatActivity() {
+class NewsTinderActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

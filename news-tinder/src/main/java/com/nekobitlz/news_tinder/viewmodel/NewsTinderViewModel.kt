@@ -10,11 +10,12 @@ class NewsTinderViewModel : ViewModel() {
 
     private val repository = NewsTinderRepository()
 
-    private val _models = MutableLiveData<List<NewsTinderCard>>()
-    val models: LiveData<List<NewsTinderCard>>
-        get() = _models
+    private val _state = MutableLiveData<TinderState>()
+    val state: LiveData<TinderState>
+        get() = _state
 
     init {
+        _state.value = TinderState.Loading
         repository.getNews().map { items ->
             items.map {
                 NewsTinderCard(
@@ -34,8 +35,16 @@ class NewsTinderViewModel : ViewModel() {
                     it.newsfeedItemWallpost.reposts?.count ?: 0,
                 )
             }
-        }.subscribe {
-            _models.postValue(it)
-        }
+        }.subscribe({
+            _state.postValue(TinderState.Success(it))
+        }, {
+            _state.postValue(TinderState.Error(it))
+        })
     }
+}
+
+sealed class TinderState {
+    data class Success(val list: List<NewsTinderCard>) : TinderState()
+    object Loading : TinderState()
+    data class Error(val throwable: Throwable) : TinderState()
 }

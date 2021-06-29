@@ -10,11 +10,12 @@
         android:id="@+id/iv_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:actualImageScaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:placeholderImage="@color/default_background" />
+        app:placeholderImage="@color/colorWhite" />
 
     <View
         android:id="@+id/top_gradient"
@@ -86,13 +87,13 @@
         android:ellipsize="end"
         android:textColor="@color/default_text"
         android:textSize="21sp"
-        app:layout_constraintHeight_max="300dp"
         app:layout_constraintBottom_toTopOf="@id/tv_like_count"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_max="300dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_time"
         app:layout_constraintVertical_bias="1.0"
-        tools:text="Уже завтра состоится соревнование по дрифту в дисциплине «Джимхана»!"/>
+        tools:text="Уже завтра состоится соревнование по дрифту в дисциплине «Джимхана»!" />
 
     <TextView
         android:id="@+id/tv_like_count"
