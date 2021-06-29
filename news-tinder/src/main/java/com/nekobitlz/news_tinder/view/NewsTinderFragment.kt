@@ -1,8 +1,10 @@
 package com.nekobitlz.news_tinder.view
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.nekobitlz.news_tinder.R
@@ -19,9 +21,11 @@ class NewsTinderFragment : Fragment(R.layout.fragment_news_tinder) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         val binding = FragmentNewsTinderBinding.bind(view)
         val cardContainer = binding.cardContainer
+        binding.toolbar.setNavigationOnClickListener {
+            activity?.onBackPressed()
+        }
 
         cardContainer.setOnCardActionListener(object : CardListener {
             override fun onLeftSwipe(position: Int, model: Any) {

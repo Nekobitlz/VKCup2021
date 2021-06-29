@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="default_background">@color/pure_black</color>
-    <color name="default_text">@color/pure_white</color>
-    <color name="secondary_text">@color/pure_black</color>
+    <color name="default_background">@color/colorGreyWhite</color>
+    <color name="default_text">@color/colorWhite</color>
+    <color name="secondary_text">@color/colorBlack</color>
     <color name="divider">#ebebeb</color>
 
     <color name="colorBlack">#000</color>
@@ -31,4 +31,6 @@
     <color name="colorButtonText">@color/colorWhite</color>
 
     <color name="colorAvatarBackground">@color/colorWhite</color>
+
+    <color name="colorTurquoise">#63B9BA</color>
 </resources>

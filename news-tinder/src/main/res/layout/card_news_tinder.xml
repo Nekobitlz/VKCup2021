@@ -14,9 +14,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:placeholderImage="@color/colorBlue" />
+        app:placeholderImage="@color/default_background" />
 
     <View
+        android:id="@+id/top_gradient"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/top_gradient"
@@ -26,6 +27,7 @@
         app:layout_constraintTop_toTopOf="@id/iv_background" />
 
     <View
+        android:id="@+id/bottom_gradient"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/bottom_gradient"
@@ -80,31 +82,34 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="40dp"
         android:ellipsize="end"
-        android:maxLines="4"
         android:textColor="@color/default_text"
         android:textSize="21sp"
+        app:layout_constraintHeight_max="300dp"
         app:layout_constraintBottom_toTopOf="@id/tv_like_count"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:text="Уже завтра состоится соревнование по дрифту в дисциплине «Джимхана»!" />
+        app:layout_constraintTop_toBottomOf="@id/tv_time"
+        app:layout_constraintVertical_bias="1.0"
+        tools:text="Уже завтра состоится соревнование по дрифту в дисциплине «Джимхана»!"/>
 
     <TextView
         android:id="@+id/tv_like_count"
         style="@style/ActionButtonsStyle"
         android:layout_marginStart="4dp"
-        android:drawableStart="@drawable/like_outline_24"
+        app:drawableStartCompat="@drawable/like_outline_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/tv_comments_count"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        tools:text="8123213123123123123" />
+        tools:text="8" />
 
     <TextView
         android:id="@+id/tv_comments_count"
         style="@style/ActionButtonsStyle"
-        android:drawableStart="@drawable/comment_outline_24"
+        app:drawableStartCompat="@drawable/comment_outline_24"
         app:layout_constraintBaseline_toBaselineOf="@id/tv_like_count"
         app:layout_constraintEnd_toStartOf="@id/tv_share_count"
         app:layout_constraintStart_toEndOf="@id/tv_like_count" />
@@ -113,10 +118,10 @@
         android:id="@+id/tv_share_count"
         style="@style/ActionButtonsStyle"
         android:layout_marginEnd="4dp"
-        android:drawableStart="@drawable/share_outline_24"
+        app:drawableStartCompat="@drawable/share_outline_24"
         app:layout_constraintBaseline_toBaselineOf="@id/tv_comments_count"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@id/tv_comments_count"
-        tools:text="8123123213123123" />
+        tools:text="8" />
 </androidx.constraintlayout.widget.ConstraintLayout>

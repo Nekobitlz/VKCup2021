@@ -11,6 +11,5 @@ data class NewsTinderCard(
     val commentCount: Int,
     val shareCount: Int,
 ) {
-
     fun getSaveCount(count: Int): String = if (count > 0) count.toString() else ""
 }
