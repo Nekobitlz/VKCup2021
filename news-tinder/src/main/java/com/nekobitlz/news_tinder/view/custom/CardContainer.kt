@@ -104,6 +104,7 @@ class CardContainer(
         } else {
             emptyContainer?.visible()
             mainContainer?.gone()
+            footerContainer?.gone()
             cardListener?.onSwipeCompleted()
         }
     }
