@@ -3,4 +3,6 @@
     <string name="no_more_items">Вы посмотрели все рекомендации!\nСпасибо, что помогаете нам становиться лучше!</string>
     <string name="like_hint">Больше таких записей</string>
     <string name="unlike_hint">Меньше таких записей</string>
+    <string name="like">Нравится</string>
+    <string name="unlike">Скрыть</string>
 </resources>
