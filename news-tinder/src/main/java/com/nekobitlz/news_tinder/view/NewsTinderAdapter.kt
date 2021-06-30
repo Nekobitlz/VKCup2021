@@ -3,6 +3,9 @@ package com.nekobitlz.news_tinder.view
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import androidx.core.view.updateLayoutParams
 import com.nekobitlz.news_tinder.R
 import com.nekobitlz.news_tinder.repository.NewsTinderCard
 import com.nekobitlz.news_tinder.databinding.CardNewsTinderBinding
@@ -11,7 +14,7 @@ import com.nekobitlz.vkcup.commons.*
 
 class NewsTinderAdapter(context: Context) : CardContainerAdapter() {
 
-    var layoutInflater: LayoutInflater = LayoutInflater.from(context)
+    private var layoutInflater: LayoutInflater = LayoutInflater.from(context)
     private var list: List<NewsTinderCard> = listOf()
 
     override fun getItem(position: Int) = list[position]
@@ -48,5 +51,39 @@ class NewsTinderAdapter(context: Context) : CardContainerAdapter() {
     fun submitList(list: List<NewsTinderCard>) {
         this.list = list
         notifyAppendData()
+    }
+
+    fun onLeftMove(view: View) {
+        val binding = CardNewsTinderBinding.bind(view)
+        binding.overlay.apply {
+            setBackgroundColor(ContextCompat.getColor(context, R.color.unlike_tint_color))
+            visible()
+        }
+        binding.swipeHint.apply {
+            visible()
+            setText(R.string.unlike_hint)
+            setTextColor(ContextCompat.getColor(context, R.color.unlike_tint_color))
+            updateLayoutParams<ConstraintLayout.LayoutParams> { horizontalBias = 1.0f }
+        }
+    }
+
+    fun onRightMove(view: View) {
+        val binding = CardNewsTinderBinding.bind(view)
+        binding.overlay.apply {
+            setBackgroundColor(ContextCompat.getColor(context, R.color.like_tint_color))
+            visible()
+        }
+        binding.swipeHint.apply {
+            visible()
+            setText(R.string.like_hint)
+            setTextColor(ContextCompat.getColor(context, R.color.like_tint_color))
+            updateLayoutParams<ConstraintLayout.LayoutParams> { horizontalBias = 0.0f }
+        }
+    }
+
+    fun onSwipeCancel(view: View) {
+        val binding = CardNewsTinderBinding.bind(view)
+        binding.overlay.gone()
+        binding.swipeHint.gone()
     }
 }

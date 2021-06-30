@@ -19,7 +19,9 @@ import com.nekobitlz.news_tinder.R
 import com.nekobitlz.news_tinder.databinding.CardContainerBinding
 import com.nekobitlz.news_tinder.databinding.CardPoseBinding
 import com.nekobitlz.vkcup.commons.SimpleAnimatorListener
+import com.nekobitlz.vkcup.commons.gone
 import com.nekobitlz.vkcup.commons.layoutInflater
+import com.nekobitlz.vkcup.commons.visible
 import kotlin.math.roundToInt
 
 class CardContainer(
@@ -33,9 +35,9 @@ class CardContainer(
     private var cardListener: CardListener? = null
     private var cardContainerAdapter: CardContainerAdapter? = null
 
-    var margin = 20.px
-    var marginBottom = 10.px
-    var maxStackSize = 5
+    var margin = 24.px
+    var marginBottom = 20.px
+    var maxStackSize = 2
 
     private var mainContainer: FrameLayout? = null
     private var headerContainer: FrameLayout? = null
@@ -111,8 +113,8 @@ class CardContainer(
         if (viewList.isNotEmpty()) {
             viewList[viewList.size - 1].setOnTouchListener(this)
         } else {
-            emptyContainer?.visibility = View.VISIBLE
-            mainContainer?.visibility = View.GONE
+            emptyContainer?.visible()
+            mainContainer?.gone()
             cardListener?.onSwipeCompleted()
         }
     }
@@ -250,7 +252,7 @@ class CardContainer(
                             resetCard(v)
                             cardContainerAdapter?.let {
                                 if (it.getCount() > swipeIndex) {
-                                    cardListener?.onSwipeCancel(swipeIndex, it.getItem(swipeIndex))
+                                    cardListener?.onSwipeCancel(v, it.getItem(swipeIndex))
                                 }
                             }
                         }
@@ -266,6 +268,11 @@ class CardContainer(
                     v.x = v.x.plus(dX)
                     v.y = v.y.plus(dY)
                     setCardRotation(v, v.x)
+                    if (v.x > 0) {
+                        cardListener?.onRightMove(v)
+                    } else {
+                        cardListener?.onLeftMove(v)
+                    }
                     return true
                 }
                 else -> return super.onTouchEvent(event)
@@ -283,6 +290,7 @@ class CardContainer(
                     if (xPos > 0) 45f else -45f
                 } else 0f
             )
+            .also { if (xPos > 0) cardListener?.onRightMove(card) else cardListener?.onLeftMove(card) }
             .setInterpolator(AccelerateInterpolator())
             .setDuration(300)
             .setListener(object : SimpleAnimatorListener() {
@@ -341,8 +349,8 @@ class CardContainer(
         this.cardContainerAdapter?.actionListener = this
 
         if (cardContainerAdapter.getCount() > 0) {
-            emptyContainer?.visibility = View.GONE
-            mainContainer?.visibility = View.VISIBLE
+            emptyContainer?.gone()
+            mainContainer?.visible()
         } else {
             return
         }
@@ -397,8 +405,8 @@ class CardContainer(
     override fun notifyAppendData() {
         val needCount = maxStackSize - mainContainer!!.childCount
         if (needCount > 0) {
-            emptyContainer?.visibility = View.GONE
-            mainContainer?.visibility = View.VISIBLE
+            emptyContainer?.gone()
+            mainContainer?.visible()
         }
         if ((count + needCount) < cardContainerAdapter!!.getCount()) {
             val size = (count + needCount)
@@ -425,8 +433,9 @@ class CardContainer(
 
     override fun swipeRight() {
         if (viewList.isNotEmpty()) {
-            if (viewList[viewList.size - 1].animation?.hasEnded() == false) return
-            dismissCard(viewList[viewList.size - 1], (screenWidth * 2), true)
+            val view = viewList[viewList.size - 1]
+            if (view.animation?.hasEnded() == false) return
+            dismissCard(view, screenWidth * 2, true)
             cardContainerAdapter?.let {
                 if (it.getCount() > swipeIndex) {
                     cardListener?.onRightSwipe(swipeIndex, it.getItem(swipeIndex))
@@ -438,8 +447,9 @@ class CardContainer(
 
     override fun swipeLeft() {
         if (viewList.isNotEmpty()) {
-            if (viewList[viewList.size - 1].animation?.hasEnded() == false) return
-            dismissCard(viewList[viewList.size - 1], -(screenWidth * 2), true)
+            val view = viewList[viewList.size - 1]
+            if (view.animation?.hasEnded() == false) return
+            dismissCard(view, -(screenWidth * 2), true)
             cardContainerAdapter?.let {
                 if (it.getCount() > swipeIndex) {
                     cardListener?.onLeftSwipe(swipeIndex, it.getItem(swipeIndex))

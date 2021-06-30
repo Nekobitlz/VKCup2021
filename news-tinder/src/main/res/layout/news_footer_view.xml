@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
-        android:background="@drawable/shadow_button_layer_list"
+        android:background="@drawable/unlike_background_oval"
         android:contentDescription="@null"
         android:elevation="2dp"
         android:padding="24dp"
@@ -18,14 +18,14 @@
         app:layout_constraintEnd_toStartOf="@id/likeFloating"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <ImageView
+    <ImageButton
         android:id="@+id/likeFloating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
-        android:background="@drawable/shadow_button_layer_list"
+        android:background="@drawable/like_background_oval"
         android:contentDescription="@null"
-        android:elevation="3dp"
+        android:elevation="2dp"
         android:padding="24dp"
         android:src="@drawable/like_outline_28"
         app:layout_constraintBottom_toBottomOf="parent"

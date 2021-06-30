@@ -46,8 +46,8 @@ class NewsTinderFragment : Fragment(R.layout.fragment_news_tinder) {
                 Toast.makeText(context, "Item", Toast.LENGTH_SHORT).show()
             }
 
-            override fun onSwipeCancel(position: Int, model: Any) {
-                Toast.makeText(context, "Cancel", Toast.LENGTH_SHORT).show()
+            override fun onSwipeCancel(view: View, model: Any) {
+                adapter.onSwipeCancel(view)
             }
 
             override fun onSwipeCompleted() {
@@ -56,11 +56,15 @@ class NewsTinderFragment : Fragment(R.layout.fragment_news_tinder) {
                     null
                 )
             }
-        })
 
-        cardContainer.maxStackSize = 2
-        cardContainer.marginBottom = 20.px
-        cardContainer.margin = 24.px
+            override fun onLeftMove(view: View) {
+                adapter.onLeftMove(view)
+            }
+
+            override fun onRightMove(view: View) {
+                adapter.onRightMove(view)
+            }
+        })
 
         cardContainer.setEmptyView(emptyView)
         cardContainer.addFooterView(generateFooterView())
@@ -90,11 +94,11 @@ class NewsTinderFragment : Fragment(R.layout.fragment_news_tinder) {
     private fun generateFooterView(): View {
         val binding = NewsFooterViewBinding.inflate(layoutInflater)
         binding.unlikeFloating.setOnClickListener {
-            it.pulse()
+            binding.unlikeFloating.pulse(R.color.unlike_tint_color)
             adapter.swipeLeft()
         }
         binding.likeFloating.setOnClickListener {
-            it.pulse()
+            binding.likeFloating.pulse(R.color.like_tint_color)
             adapter.swipeRight()
         }
         return binding.root
