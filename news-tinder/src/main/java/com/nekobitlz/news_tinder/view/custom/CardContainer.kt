@@ -40,7 +40,6 @@ class CardContainer(
     var maxStackSize = 2
 
     private var mainContainer: FrameLayout? = null
-    private var headerContainer: FrameLayout? = null
     private var footerContainer: FrameLayout? = null
     private var emptyContainer: FrameLayout? = null
     private var draggableSurfaceLayout: FrameLayout? = null
@@ -80,12 +79,6 @@ class CardContainer(
         emptyContainer?.addView(v)
     }
 
-    fun addHeaderView(v: View) {
-        (v.parent as? ViewGroup)?.removeView(v)
-        headerContainer?.removeAllViews()
-        headerContainer?.addView(v)
-    }
-
     fun addFooterView(v: View) {
         (v.parent as? ViewGroup)?.removeView(v)
         footerContainer?.removeAllViews()
@@ -96,14 +89,10 @@ class CardContainer(
         this.cardListener = cardListener
     }
 
-    fun getHeaderView(): View? = headerContainer
-    fun getFooterView(): View? = footerContainer
-
     private fun setupSurface() {
         val viewMain = CardContainerBinding.inflate(layoutInflater)
         mainContainer = viewMain.mainContainer
         emptyContainer = viewMain.emptyLayout
-        headerContainer = viewMain.headerContainer
         footerContainer = viewMain.footerContainer
         draggableSurfaceLayout = viewMain.draggableSurfaceLayout
         addView(viewMain.root)
@@ -265,13 +254,16 @@ class CardContainer(
                     newY = event.y.plus(if (isFirstTimeMove) mainContainer!!.y else 0f)
                     dX = newX - oldX
                     dY = newY - oldY
+                    val shouldUpdate = v.x >= 0 && v.x.plus(dX) <= 0 || v.x <= 0 && v.x.plus(dX) >= 0
                     v.x = v.x.plus(dX)
                     v.y = v.y.plus(dY)
                     setCardRotation(v, v.x)
-                    if (v.x > 0) {
-                        cardListener?.onRightMove(v)
-                    } else {
-                        cardListener?.onLeftMove(v)
+                    if (shouldUpdate) {
+                        if (v.x > 0) {
+                            cardListener?.onRightMove(v)
+                        } else {
+                            cardListener?.onLeftMove(v)
+                        }
                     }
                     return true
                 }
@@ -281,7 +273,7 @@ class CardContainer(
     }
 
 
-    private fun dismissCard(card: View, xPos: Int, rotate: Boolean) {
+    private fun dismissCard(card: View, xPos: Int, rotate: Boolean, shouldUpdateMove: Boolean = false) {
         card.animate()
             .x(xPos.toFloat())
             .y(0F)
@@ -290,7 +282,15 @@ class CardContainer(
                     if (xPos > 0) 45f else -45f
                 } else 0f
             )
-            .also { if (xPos > 0) cardListener?.onRightMove(card) else cardListener?.onLeftMove(card) }
+            .also {
+                if (shouldUpdateMove) {
+                    if (xPos > 0) {
+                        cardListener?.onRightMove(card)
+                    } else {
+                        cardListener?.onLeftMove(card)
+                    }
+                }
+            }
             .setInterpolator(AccelerateInterpolator())
             .setDuration(300)
             .setListener(object : SimpleAnimatorListener() {
@@ -435,7 +435,7 @@ class CardContainer(
         if (viewList.isNotEmpty()) {
             val view = viewList[viewList.size - 1]
             if (view.animation?.hasEnded() == false) return
-            dismissCard(view, screenWidth * 2, true)
+            dismissCard(view, screenWidth * 2, true, shouldUpdateMove = true)
             cardContainerAdapter?.let {
                 if (it.getCount() > swipeIndex) {
                     cardListener?.onRightSwipe(swipeIndex, it.getItem(swipeIndex))
@@ -449,7 +449,7 @@ class CardContainer(
         if (viewList.isNotEmpty()) {
             val view = viewList[viewList.size - 1]
             if (view.animation?.hasEnded() == false) return
-            dismissCard(view, -(screenWidth * 2), true)
+            dismissCard(view, -(screenWidth * 2), true, shouldUpdateMove = true)
             cardContainerAdapter?.let {
                 if (it.getCount() > swipeIndex) {
                     cardListener?.onLeftSwipe(swipeIndex, it.getItem(swipeIndex))
