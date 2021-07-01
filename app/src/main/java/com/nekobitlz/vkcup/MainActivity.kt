@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.nekobitlz.news_tinder.NewsTinderActivity
 import com.nekobitlz.vkcup.databinding.ActivityMainBinding
+import com.nekobitlz.voice_editor.VoiceEditorActivity
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKAccessToken
 import com.vk.api.sdk.auth.VKAuthCallback
@@ -24,6 +25,9 @@ class MainActivity : AppCompatActivity() {
             } else {
                 VK.login(this, arrayListOf(VKScope.FRIENDS, VKScope.WALL))
             }
+        }
+        binding.toVoiceEditor.setOnClickListener {
+            toVoiceEditor()
         }
     }
 
@@ -47,4 +51,8 @@ class MainActivity : AppCompatActivity() {
         startActivity(myIntent)
     }
 
+    private fun toVoiceEditor() {
+        val myIntent = Intent(this@MainActivity, VoiceEditorActivity::class.java)
+        startActivity(myIntent)
+    }
 }

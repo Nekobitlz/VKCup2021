@@ -1,3 +1,2 @@
-include ':news-tinder'
-include ':app',':commons'
+include ':app',':commons', ':news-tinder', ':voice_editor'
 rootProject.name = "VKCup2021"

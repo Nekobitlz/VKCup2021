@@ -13,6 +13,12 @@
         android:id="@+id/to_second"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="To second" />
+        android:text="2. To news tinder" />
+
+    <Button
+        android:id="@+id/to_voice_editor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="5. To voice editor" />
 
 </LinearLayout>

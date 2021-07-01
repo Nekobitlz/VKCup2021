@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="record_button_activated">#735CE6</color>
+    <color name="record_button_background">#0D001C3D</color>
+</resources>
