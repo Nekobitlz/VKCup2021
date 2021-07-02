@@ -6,27 +6,31 @@ import android.os.Environment
 import com.nekobitlz.voice_editor.utils.VoiceLogger.logDebug
 import java.io.File
 import java.io.IOException
-import java.lang.ref.WeakReference
+import kotlin.jvm.Throws
 
-class VoiceRecorder(private val contextRef: WeakReference<Context>) {
+class VoiceRecorder(private val context: Context) {
 
     private val AUDIO_RECORDER_FILE_EXT_3GP = ".3gp"
     private val AUDIO_RECORDER_FILE_EXT_MP4 = ".mp4"
     private val AUDIO_RECORDER_FOLDER = "AudioRecorder"
     private var recorder: MediaRecorder? = null
     private val currentFormat = 0
-    private val output_formats = intArrayOf(
+    private val outputFormats = intArrayOf(
         MediaRecorder.OutputFormat.MPEG_4,
         MediaRecorder.OutputFormat.THREE_GPP
     )
-    private val file_exts = arrayOf(AUDIO_RECORDER_FILE_EXT_MP4, AUDIO_RECORDER_FILE_EXT_3GP)
+    private val fileExts = arrayOf(AUDIO_RECORDER_FILE_EXT_MP4, AUDIO_RECORDER_FILE_EXT_3GP)
+    var currentFileName: String? = null
+        private set
 
+    @Throws(IllegalStateException::class)
     fun startRecording() {
+        currentFileName = getFilename()
         recorder = MediaRecorder().apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
-            setOutputFormat(output_formats[currentFormat])
+            setOutputFormat(outputFormats[currentFormat])
             setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-            setOutputFile(getFilename())
+            setOutputFile(currentFileName)
             setOnErrorListener(errorListener)
             setOnInfoListener(infoListener)
         }
@@ -35,8 +39,10 @@ class VoiceRecorder(private val contextRef: WeakReference<Context>) {
             recorder?.start()
         } catch (e: IllegalStateException) {
             logDebug(e.message ?: "ise")
+            throw IllegalStateException()
         } catch (e: IOException) {
             logDebug(e.message ?: "io")
+            throw IllegalStateException()
         }
     }
 
@@ -48,15 +54,14 @@ class VoiceRecorder(private val contextRef: WeakReference<Context>) {
     }
 
     private fun getFilename(): String {
-        val filepath: String = contextRef.get()
-            ?.getExternalFilesDir(Environment.DIRECTORY_PODCASTS)?.path
+        val filepath: String = context.getExternalFilesDir(Environment.DIRECTORY_PODCASTS)?.path
             ?: Environment.getExternalStorageDirectory().path
         logDebug(filepath)
         val file = File(filepath, AUDIO_RECORDER_FOLDER)
         if (!file.exists()) {
             file.mkdirs()
         }
-        return file.absolutePath.toString() + "/" + System.currentTimeMillis() + file_exts[currentFormat]
+        return file.absolutePath.toString() + "/" + System.currentTimeMillis() + fileExts[currentFormat]
     }
 
     private val errorListener = MediaRecorder.OnErrorListener { mr, what, extra ->

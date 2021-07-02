@@ -12,14 +12,14 @@ import android.view.View.OnTouchListener
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.nekobitlz.vkcup.commons.gone
-import com.nekobitlz.vkcup.commons.lazyUnsychronized
 import com.nekobitlz.vkcup.commons.visible
 import com.nekobitlz.voice_editor.R
 import com.nekobitlz.voice_editor.databinding.FragmentVoiceEditorBinding
-import com.nekobitlz.voice_editor.repository.VoiceRecorder
 import com.nekobitlz.voice_editor.utils.VoiceLogger.logDebug
-import java.lang.ref.WeakReference
+import com.nekobitlz.voice_editor.view.viewmodel.VoiceEditorState
+import com.nekobitlz.voice_editor.view.viewmodel.VoiceEditorViewModel
 
 
 class VoiceEditorFragment : Fragment(R.layout.fragment_voice_editor) {
@@ -27,6 +27,8 @@ class VoiceEditorFragment : Fragment(R.layout.fragment_voice_editor) {
     private var _binding: FragmentVoiceEditorBinding? = null
     private val binding: FragmentVoiceEditorBinding
         get() = _binding!!
+
+    private lateinit var viewModel: VoiceEditorViewModel
 
     private var startTime: Long = 0
     private val timerHandler: Handler = Handler(Looper.myLooper()!!)
@@ -40,14 +42,31 @@ class VoiceEditorFragment : Fragment(R.layout.fragment_voice_editor) {
             timerHandler.postDelayed(this, 500)
         }
     }
-    private val voiceRecorder by lazyUnsychronized {
-        VoiceRecorder(WeakReference(requireContext()))
-    }
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         _binding = FragmentVoiceEditorBinding.bind(view)
+        viewModel = ViewModelProvider(this).get(VoiceEditorViewModel::class.java)
+        viewModel.state.observe(viewLifecycleOwner, {
+            when (it) {
+                VoiceEditorState.None -> {
+                    stopTimer()
+                    binding.tvTimer.gone()
+                    binding.tvRecordHint.visible()
+                    binding.tvRecordNew.gone()
+                    binding.btnVoiceRecord.isActivated = false
+                    binding.btnVoiceRecord.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.microphone_alt_28))
+                }
+                VoiceEditorState.Recorded -> {
+                    stopTimer()
+                    binding.tvRecordNew.visible()
+                    binding.btnVoiceRecord.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.play_48))
+                }
+                VoiceEditorState.Recording -> {
+                    startTimer()
+                    binding.btnVoiceRecord.isActivated = true
+                }
+            }
+        })
         binding.btnVoiceRecord.setOnTouchListener(OnTouchListener { v, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
@@ -67,18 +86,21 @@ class VoiceEditorFragment : Fragment(R.layout.fragment_voice_editor) {
                         )
                     } else {
                         logDebug("Start Recording")
-                        startRecording()
+                        viewModel.onButtonDown()
                     }
                     return@OnTouchListener true
                 }
                 MotionEvent.ACTION_UP -> {
                     logDebug("stop Recording")
-                    stopRecording()
+                    viewModel.onButtonUp()
                     return@OnTouchListener true
                 }
             }
             false
         })
+        binding.tvRecordNew.setOnClickListener {
+            viewModel.onNewRecordClick()
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -90,23 +112,11 @@ class VoiceEditorFragment : Fragment(R.layout.fragment_voice_editor) {
             REQUEST_PERMISSION -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     logDebug("Start Recording with permission")
-                    startRecording()
+                    viewModel.onPermissionGranted()
                 }
                 return
             }
         }
-    }
-
-    private fun startRecording() {
-        voiceRecorder.startRecording()
-        startTimer()
-        binding.btnVoiceRecord.isActivated = true
-    }
-
-    private fun stopRecording() {
-        voiceRecorder.stopRecording()
-        stopTimer()
-        binding.btnVoiceRecord.isActivated = false
     }
 
     private fun startTimer() {
