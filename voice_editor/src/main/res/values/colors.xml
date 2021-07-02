@@ -2,4 +2,5 @@
 <resources>
     <color name="record_button_activated">#735CE6</color>
     <color name="record_button_background">#0D001C3D</color>
+    <color name="delete_bin_color">#1AE64646</color>
 </resources>

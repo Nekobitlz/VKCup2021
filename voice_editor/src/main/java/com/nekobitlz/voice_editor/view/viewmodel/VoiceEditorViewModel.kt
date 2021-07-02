@@ -13,7 +13,7 @@ class VoiceEditorViewModel(application: Application) : AndroidViewModel(applicat
     private val voicePlayer = VoicePlayer()
 
     private val _state = MutableLiveData<VoiceEditorState>().apply {
-        value = VoiceEditorState.None
+        value = VoiceEditorState.Start
     }
     val state: LiveData<VoiceEditorState>
         get() = _state
@@ -26,7 +26,7 @@ class VoiceEditorViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun onButtonDown() {
-        if (_state.value is VoiceEditorState.None) {
+        if (_state.value is VoiceEditorState.Start) {
             voiceRecorder.startRecording()
             _state.value = VoiceEditorState.Recording
         } else if (_state.value is VoiceEditorState.Recorded) {
@@ -38,13 +38,13 @@ class VoiceEditorViewModel(application: Application) : AndroidViewModel(applicat
         onButtonDown()
     }
 
-    fun onNewRecordClick() {
-        _state.value = VoiceEditorState.None
+    fun onNewRecordRequest() {
+        _state.value = VoiceEditorState.Start
     }
 }
 
 sealed class VoiceEditorState {
-    object None : VoiceEditorState()
+    object Start : VoiceEditorState()
     object Recording : VoiceEditorState()
     object Recorded : VoiceEditorState()
 }

@@ -1,14 +1,11 @@
 package com.nekobitlz.voice_editor.view
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.MotionEvent
 import android.view.View
-import android.view.View.OnTouchListener
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -18,6 +15,7 @@ import com.nekobitlz.vkcup.commons.visible
 import com.nekobitlz.voice_editor.R
 import com.nekobitlz.voice_editor.databinding.FragmentVoiceEditorBinding
 import com.nekobitlz.voice_editor.utils.VoiceLogger.logDebug
+import com.nekobitlz.voice_editor.view.custom.VoiceRecordButtonClickListener
 import com.nekobitlz.voice_editor.view.viewmodel.VoiceEditorState
 import com.nekobitlz.voice_editor.view.viewmodel.VoiceEditorViewModel
 
@@ -48,60 +46,113 @@ class VoiceEditorFragment : Fragment(R.layout.fragment_voice_editor) {
         viewModel = ViewModelProvider(this).get(VoiceEditorViewModel::class.java)
         viewModel.state.observe(viewLifecycleOwner, {
             when (it) {
-                VoiceEditorState.None -> {
-                    stopTimer()
-                    binding.tvTimer.gone()
-                    binding.tvRecordHint.visible()
-                    binding.tvRecordNew.gone()
-                    binding.btnVoiceRecord.isActivated = false
-                    binding.btnVoiceRecord.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.microphone_alt_28))
-                }
-                VoiceEditorState.Recorded -> {
-                    stopTimer()
-                    binding.tvRecordNew.visible()
-                    binding.btnVoiceRecord.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.play_48))
-                }
-                VoiceEditorState.Recording -> {
-                    startTimer()
-                    binding.btnVoiceRecord.isActivated = true
-                }
+                VoiceEditorState.Start -> handleStartState()
+                VoiceEditorState.Recorded -> handleRecordedState()
+                VoiceEditorState.Recording -> handleRecordingState()
             }
         })
-        binding.btnVoiceRecord.setOnTouchListener(OnTouchListener { v, event ->
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    if (ContextCompat.checkSelfPermission(
-                            requireContext(),
-                            Manifest.permission.RECORD_AUDIO
-                        ) != PackageManager.PERMISSION_GRANTED
-                    ) {
-                        ActivityCompat.requestPermissions(
-                            requireActivity(),
-                            arrayOf(
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                Manifest.permission.RECORD_AUDIO,
-                                Manifest.permission.READ_EXTERNAL_STORAGE
-                            ),
-                            REQUEST_PERMISSION
-                        )
-                    } else {
-                        logDebug("Start Recording")
-                        viewModel.onButtonDown()
-                    }
-                    return@OnTouchListener true
-                }
-                MotionEvent.ACTION_UP -> {
-                    logDebug("stop Recording")
-                    viewModel.onButtonUp()
-                    return@OnTouchListener true
-                }
-            }
-            false
-        })
+        binding.btnBin.setOnClickListener {
+            viewModel.onNewRecordRequest()
+        }
         binding.tvRecordNew.setOnClickListener {
-            viewModel.onNewRecordClick()
+            viewModel.onNewRecordRequest()
+        }
+        binding.btnVoiceRecord.listener = object : VoiceRecordButtonClickListener {
+            override fun onButtonDown() {
+                if (isPermissionGranted()) {
+                    requestPermissions()
+                } else {
+                    logDebug("Start Recording")
+                    viewModel.onButtonDown()
+                }
+            }
+
+            override fun onButtonUp() {
+                logDebug("stop Recording")
+                if (!matchesWithBin(binding.btnVoiceRecord)) {
+                    viewModel.onButtonUp()
+                } else {
+                    viewModel.onNewRecordRequest()
+                }
+                val v = binding.btnBin
+                if (v.scaleX > 1f || v.scaleY > 1f) {
+                    v.scaleX = 1f
+                    v.scaleY = 1f
+                }
+            }
+
+            override fun onMove() {
+                val v = binding.btnBin
+                if (v.scaleX <= 1f || v.scaleY <= 1f) {
+                    v.scaleX = 1.25f
+                    v.scaleY = 1.25f
+                }
+            }
+
         }
     }
+
+    private fun matchesWithBin(v: View): Boolean {
+        val location = IntArray(2)
+        val binBtn = binding.btnBin
+        binBtn.getLocationInWindow(location)
+        val binX = location[0]
+        val binY = location[1]
+        if (v.y + v.height * 2 / 3 >= binY - binBtn.height
+            && v.y <= binY + binBtn.height
+            && v.x + v.width * 2 / 3 >= binX - binBtn.width
+            && v.x <= binX + binBtn.width
+        ) {
+            return true
+        }
+        return false
+    }
+
+    private fun handleRecordingState() {
+        startTimer()
+        binding.apply {
+            btnBin.visible()
+            btnVoiceRecord.apply {
+                isActivated = true
+                movingAvailable = true
+            }
+        }
+    }
+
+    private fun handleRecordedState() {
+        stopTimer()
+        binding.apply {
+            tvRecordNew.visible()
+            btnVoiceRecord.setImageDrawable(
+                ContextCompat.getDrawable(requireContext(), R.drawable.play_48)
+            )
+        }
+    }
+
+    private fun handleStartState() {
+        stopTimer()
+        binding.apply {
+            tvTimer.gone()
+            tvRecordHint.visible()
+            tvRecordNew.gone()
+            btnBin.gone()
+            btnVoiceRecord.apply {
+                visible()
+                isActivated = false
+                setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireContext(), R.drawable.microphone_alt_28
+                    )
+                )
+                movingAvailable = false
+            }
+        }
+    }
+
+    private fun isPermissionGranted() = ContextCompat.checkSelfPermission(
+        requireContext(),
+        Manifest.permission.RECORD_AUDIO
+    ) != PackageManager.PERMISSION_GRANTED
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -117,6 +168,18 @@ class VoiceEditorFragment : Fragment(R.layout.fragment_voice_editor) {
                 return
             }
         }
+    }
+
+    private fun requestPermissions() {
+        ActivityCompat.requestPermissions(
+            requireActivity(),
+            arrayOf(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ),
+            REQUEST_PERMISSION
+        )
     }
 
     private fun startTimer() {
