@@ -1,7 +1,7 @@
 package com.nekobitlz.voice_editor.view
 
 import android.Manifest
-import android.content.pm.PackageManager
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -70,7 +70,7 @@ class VoiceRecorderFragment : Fragment(R.layout.fragment_voice_recorder) {
         }
         binding.btnVoiceRecord.listener = object : VoiceRecordButtonClickListener {
             override fun onButtonDown() {
-                if (isPermissionGranted()) {
+                if (!isPermissionGranted()) {
                     requestPermissions()
                 } else {
                     logDebug("Start Recording")
@@ -163,20 +163,10 @@ class VoiceRecorderFragment : Fragment(R.layout.fragment_voice_recorder) {
         }
     }
 
-    private fun isPermissionGranted() = context?.let { context ->
-        return ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.RECORD_AUDIO
-        ) != -1
-                && ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        ) != -1
-                && ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        ) != -1
-    } ?: false
+    private fun isPermissionGranted(): Boolean = ContextCompat.checkSelfPermission(
+        requireActivity(),
+        Manifest.permission.RECORD_AUDIO
+    ) == PERMISSION_GRANTED
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -185,10 +175,7 @@ class VoiceRecorderFragment : Fragment(R.layout.fragment_voice_recorder) {
     ) {
         when (requestCode) {
             REQUEST_PERMISSION -> {
-                if (grantResults.isNotEmpty()
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                    && grantResults[1] == PackageManager.PERMISSION_GRANTED
-                ) {
+                if (grantResults.isNotEmpty() && grantResults[0] == PERMISSION_GRANTED) {
                     logDebug("Start Recording with permission")
                     viewModel.onPermissionGranted()
                 } else {
@@ -206,11 +193,7 @@ class VoiceRecorderFragment : Fragment(R.layout.fragment_voice_recorder) {
     private fun requestPermissions() {
         ActivityCompat.requestPermissions(
             requireActivity(),
-            arrayOf(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            ),
+            arrayOf(Manifest.permission.RECORD_AUDIO),
             REQUEST_PERMISSION
         )
     }

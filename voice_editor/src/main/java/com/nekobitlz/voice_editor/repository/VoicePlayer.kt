@@ -37,7 +37,11 @@ class VoicePlayer {
                 addRoboticPitch()
             }
             mediaPlayer?.start()
-            noiseSuppressor = mediaPlayer?.audioSessionId?.let { NoiseSuppressor.create(it) }
+            noiseSuppressor = mediaPlayer?.audioSessionId?.let {
+                NoiseSuppressor.create(it).apply {
+                    enabled = noiseEnabled
+                }
+            }
         } catch (e: Exception) {
             logDebug(e.message ?: "ise")
         }
