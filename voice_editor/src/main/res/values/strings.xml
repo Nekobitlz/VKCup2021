@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="record_title">Запишите голосовое и обработайте его</string>
+    <string name="record_new">Записать новое голосовое</string>
+    <string name="record_hint">Удерживайте, чтобы начать запись</string>
+    <string name="your_voice">Ваше голосовое</string>
+    <string name="error_audio_rec">Не удалось записать голосовое сообщение</string>
+</resources>

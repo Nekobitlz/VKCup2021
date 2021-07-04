@@ -1,97 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorWhite">
 
-    <TextView
-        android:id="@+id/tv_hint"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:gravity="center"
-        android:text="Запишите голосовое и обработайте его"
-        android:textColor="@color/colorPrimaryText"
-        android:textSize="28sp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tv_record_new"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="?selectableItemBackground"
-        android:padding="14dp"
-        android:text="Записать новое голосовое"
-        android:textColor="@color/record_button_activated"
-        android:textSize="15sp"
-        android:visibility="gone"
+    <ImageButton
+        android:id="@+id/btn_play"
+        android:layout_width="84dp"
+        android:layout_height="84dp"
+        android:layout_marginTop="106dp"
+        android:background="@drawable/record_button_backgroun"
+        android:contentDescription="@null"
+        android:padding="24dp"
+        android:src="@drawable/play_48"
+        app:layout_constraintBottom_toTopOf="@id/tv_your_voice"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_hint"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toBottomOf="@id/app_bar" />
 
     <TextView
-        android:id="@+id/tv_record_hint"
+        android:id="@+id/tv_your_voice"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="13dp"
         android:gravity="center"
-        android:text="Удерживайте, чтобы начать запись"
-        android:textColor="#6D7885"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_voice_record"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/tv_timer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="20dp"
-        android:gravity="center"
-        android:text="0:21"
+        android:text="@string/your_voice"
         android:textColor="@color/colorPrimaryText"
         android:textSize="21sp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/wave_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_voice_record"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@id/btn_play" />
 
-    <ImageButton
-        android:id="@+id/btn_bin"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginBottom="48dp"
-        android:background="@drawable/red_round_button"
-        android:contentDescription="@null"
-        android:padding="12dp"
-        android:src="@drawable/delete_outline_24"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <com.nekobitlz.voice_editor.view.custom.WaveView
+        android:id="@+id/wave_view"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="28dp"
+        android:padding="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toBottomOf="@id/tv_your_voice" />
 
-    <com.nekobitlz.voice_editor.view.custom.VoiceRecordButton
-        android:id="@+id/btn_voice_record"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
-        android:background="@drawable/record_button_backgroun"
-        android:padding="40dp"
-        android:src="@drawable/microphone_alt_28"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:elevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:theme="@style/ThemeOverlay.AppCompat.Light">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@android:color/transparent"
+            app:navigationIcon="@drawable/ic_back"
+            app:theme="@style/VoiceEditorToolbarTheme" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <Button
+        android:id="@+id/btn_remove_noise"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="убрать шум"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/wave_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

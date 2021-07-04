@@ -1,50 +1,42 @@
 package com.nekobitlz.voice_editor.view.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.nekobitlz.voice_editor.repository.VoicePlayer
-import com.nekobitlz.voice_editor.repository.VoiceRecorder
 
-class VoiceEditorViewModel(application: Application) : AndroidViewModel(application) {
+class VoiceEditorViewModel : ViewModel() {
 
-    private val voiceRecorder = VoiceRecorder(application.applicationContext)
-    private val voicePlayer = VoicePlayer()
+    private val player = VoicePlayer()
 
-    private val _state = MutableLiveData<VoiceEditorState>().apply {
-        value = VoiceEditorState.Start
-    }
+    private val _state = MutableLiveData<VoiceEditorState>()
     val state: LiveData<VoiceEditorState>
         get() = _state
 
-    fun onButtonUp() {
-        if (_state.value is VoiceEditorState.Recording) {
-            voiceRecorder.stopRecording()
-            _state.value = VoiceEditorState.Recorded
+    fun onPlayRequest(fileName: String?) {
+        startPlaying(fileName ?: return)
+        _state.value = VoiceEditorState.Play
+    }
+
+    fun onPlayButtonClick(fileName: String?) {
+        if (state.value is VoiceEditorState.Play) {
+            player.pause()
+            _state.value = VoiceEditorState.Pause
+        } else {
+            startPlaying(fileName ?: return)
+            _state.value = VoiceEditorState.Play
         }
     }
 
-    fun onButtonDown() {
-        if (_state.value is VoiceEditorState.Start) {
-            voiceRecorder.startRecording()
-            _state.value = VoiceEditorState.Recording
-        } else if (_state.value is VoiceEditorState.Recorded) {
-            voicePlayer.startPlaying(voiceRecorder.currentFileName ?: return)
+    private fun startPlaying(fileName: String): Boolean {
+        player.startPlaying(fileName) {
+            _state.value = VoiceEditorState.Pause
         }
-    }
-
-    fun onPermissionGranted() {
-        onButtonDown()
-    }
-
-    fun onNewRecordRequest() {
-        _state.value = VoiceEditorState.Start
+        return false
     }
 }
 
 sealed class VoiceEditorState {
-    object Start : VoiceEditorState()
-    object Recording : VoiceEditorState()
-    object Recorded : VoiceEditorState()
+    object Play : VoiceEditorState()
+    object Pause : VoiceEditorState()
 }
