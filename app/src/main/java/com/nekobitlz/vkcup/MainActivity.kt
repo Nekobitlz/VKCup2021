@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.nekobitlz.news_tinder.NewsTinderActivity
+import com.nekobitlz.taxi.TaxiActivity
 import com.nekobitlz.vkcup.databinding.ActivityMainBinding
 import com.nekobitlz.voice_editor.VoiceEditorActivity
 import com.vk.api.sdk.VK
@@ -19,6 +20,9 @@ class MainActivity : AppCompatActivity() {
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.toTaxi.setOnClickListener {
+            toTaxi()
+        }
         binding.toSecond.setOnClickListener {
             if (VK.isLoggedIn()) {
                 toNewsTinder()
@@ -53,6 +57,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun toVoiceEditor() {
         val myIntent = Intent(this@MainActivity, VoiceEditorActivity::class.java)
+        startActivity(myIntent)
+    }
+
+    private fun toTaxi() {
+        val myIntent = Intent(this@MainActivity, TaxiActivity::class.java)
         startActivity(myIntent)
     }
 }
