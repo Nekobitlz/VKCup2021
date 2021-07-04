@@ -10,4 +10,6 @@
     <string name="remove_noise">Удалить фоновый шум</string>
     <string name="add_robotic_voice">Добавить эффект «‎робовойс»</string>
     <string name="add_sound_effect">Добавить звуковой эффект</string>
+    <string name="no_permission_error">Вы должны предоставить все необходимые разрешения</string>
+    <string name="robotic_voice_not_supported">Эффект \"робовойс\" не поддерживается на вашем устройстве</string>
 </resources>

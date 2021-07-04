@@ -48,11 +48,18 @@ class VoiceEditorViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun onToggleRoboticVoiceClick(isSelected: Boolean) {
-
+        player.toggleRobotVoice(isSelected, onError = {
+            _errorEvent.value = ErrorEvent.RoboticVoiceNotSupported
+        })
     }
 
     fun onAddSoundEffectClick(isSelected: Boolean) {
 
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        player?.release()
     }
 }
 
@@ -63,4 +70,5 @@ sealed class VoiceEditorState {
 
 sealed class ErrorEvent {
     object NoiseSuppressionNotSupported : ErrorEvent()
+    object RoboticVoiceNotSupported : ErrorEvent()
 }

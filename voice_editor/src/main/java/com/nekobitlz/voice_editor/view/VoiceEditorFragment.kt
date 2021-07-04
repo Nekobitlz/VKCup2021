@@ -34,15 +34,11 @@ class VoiceEditorFragment : Fragment(R.layout.fragment_voice_editor) {
             }
         })
         viewModel.errorEvent.observe(viewLifecycleOwner) {
-            when (it) {
-                ErrorEvent.NoiseSuppressionNotSupported -> {
-                    Toast.makeText(
-                        context,
-                        getString(R.string.noise_suppression_not_supported),
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
+            val textRes = when (it) {
+                ErrorEvent.NoiseSuppressionNotSupported -> R.string.noise_suppression_not_supported
+                ErrorEvent.RoboticVoiceNotSupported -> R.string.robotic_voice_not_supported
             }
+            Toast.makeText(context, textRes, Toast.LENGTH_LONG).show()
         }
         if (savedInstanceState == null) {
             viewModel.onPlayRequest(fileName)

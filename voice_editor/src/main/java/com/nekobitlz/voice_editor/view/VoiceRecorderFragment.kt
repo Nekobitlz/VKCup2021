@@ -130,6 +130,13 @@ class VoiceRecorderFragment : Fragment(R.layout.fragment_voice_recorder) {
         stopTimer()
         binding.apply {
             tvRecordNew.visible()
+            btnVoiceRecord.apply {
+                isActivated = true
+                movingAvailable = false
+            }
+            tvTimer.visible()
+            btnBin.visible()
+            tvRecordHint.gone()
             btnVoiceRecord.setImageDrawable(
                 ContextCompat.getDrawable(requireContext(), R.drawable.play_48)
             )
@@ -156,10 +163,20 @@ class VoiceRecorderFragment : Fragment(R.layout.fragment_voice_recorder) {
         }
     }
 
-    private fun isPermissionGranted() = ContextCompat.checkSelfPermission(
-        requireContext(),
-        Manifest.permission.RECORD_AUDIO
-    ) != PackageManager.PERMISSION_GRANTED
+    private fun isPermissionGranted() = context?.let { context ->
+        return ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.RECORD_AUDIO
+        ) != -1
+                && ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        ) != -1
+                && ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) != -1
+    } ?: false
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -168,9 +185,18 @@ class VoiceRecorderFragment : Fragment(R.layout.fragment_voice_recorder) {
     ) {
         when (requestCode) {
             REQUEST_PERMISSION -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.isNotEmpty()
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                    && grantResults[1] == PackageManager.PERMISSION_GRANTED
+                ) {
                     logDebug("Start Recording with permission")
                     viewModel.onPermissionGranted()
+                } else {
+                    Toast.makeText(
+                        context,
+                        getString(R.string.no_permission_error),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
                 return
             }
