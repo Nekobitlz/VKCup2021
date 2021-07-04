@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rounded_corners_background_14"
+    android:elevation="12dp"
+    android:padding="12dp">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:includeFontPadding="false"
+        android:paddingVertical="6dp"
+        android:text="@string/editor_title"
+        android:textAllCaps="true"
+        android:textColor="@color/colorGreyDark"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toTopOf="@id/rv_actions"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_actions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_title"
+        tools:itemCount="3"
+        tools:listitem="@layout/item_editor_action" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

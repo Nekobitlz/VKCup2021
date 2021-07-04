@@ -2,6 +2,6 @@
 <resources>
 
     <style name="VoiceEditorToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
-        <item name="colorControlNormal">@color/record_button_activated</item>
+        <item name="colorControlNormal">@color/record_purple_color</item>
     </style>
 </resources>

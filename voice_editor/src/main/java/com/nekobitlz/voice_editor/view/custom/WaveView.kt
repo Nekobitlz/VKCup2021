@@ -19,7 +19,7 @@ class WaveView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr) {
-    private val DEFAULT_ITEM_COLOR = ContextCompat.getColor(context, R.color.record_button_activated)
+    private val DEFAULT_ITEM_COLOR = ContextCompat.getColor(context, R.color.record_purple_color)
 
     private val wavePath = Path()
     private val linePaint = Paint()

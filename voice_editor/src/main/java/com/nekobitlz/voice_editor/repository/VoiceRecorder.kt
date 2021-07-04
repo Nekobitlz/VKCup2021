@@ -74,7 +74,7 @@ class VoiceRecorder(private val context: Context) {
     fun startRecording() {
         currentFileName = getFilename()
         recorder = MediaRecorder().apply {
-            setAudioSource(MediaRecorder.AudioSource.MIC)
+            setAudioSource(MediaRecorder.AudioSource.VOICE_RECOGNITION)
             setOutputFormat(outputFormats[currentFormat])
             setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
             setOutputFile(currentFileName)

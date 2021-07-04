@@ -7,31 +7,48 @@ import com.nekobitlz.voice_editor.utils.VoiceLogger
 
 class VoicePlayer {
     private var mediaPlayer: MediaPlayer? = null
+    private var noiseSuppressor: NoiseSuppressor? = null
 
     fun startPlaying(fileName: String, onComplete: () -> Unit) {
         VoiceLogger.logDebug("Start playing")
-        mediaPlayer = MediaPlayer().apply {
-            setDataSource(fileName)
+        if (mediaPlayer == null) {
+            mediaPlayer = MediaPlayer().apply {
+                setDataSource(fileName)
+            }
+            try {
+                mediaPlayer?.setOnCompletionListener {
+                    mediaPlayer?.stop()
+                    mediaPlayer?.release()
+                    mediaPlayer = null
+                    noiseSuppressor?.release()
+                    noiseSuppressor = null
+                    onComplete()
+                }
+                mediaPlayer?.prepare()
+                VoiceLogger.logDebug("Started")
+            } catch (e: Exception) {
+                VoiceLogger.logDebug(e.message ?: "ise")
+            }
         }
         try {
-            mediaPlayer?.setOnCompletionListener {
-                onComplete()
-            }
-            mediaPlayer?.prepare()
             mediaPlayer?.start()
-            VoiceLogger.logDebug("Started")
+            noiseSuppressor = mediaPlayer?.audioSessionId?.let { NoiseSuppressor.create(it) }
         } catch (e: Exception) {
             VoiceLogger.logDebug(e.message ?: "ise")
         }
     }
 
-    fun toggleNoise(isEnabled: Boolean) {
-        val noiseSuppressor = NoiseSuppressor.create(mediaPlayer?.audioSessionId ?: return)
-        noiseSuppressor.enabled = isEnabled
+    fun toggleNoise(isEnabled: Boolean, onError: () -> Unit) {
+        if (NoiseSuppressor.isAvailable()) {
+            noiseSuppressor?.enabled = isEnabled
+        } else {
+            onError()
+        }
     }
 
     fun pause() {
         mediaPlayer?.pause()
+        VoiceLogger.logDebug("Paused")
     }
 
 }

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="id_remove_noise" type="id"/>
+    <item name="id_add_robotic_voice" type="id"/>
+    <item name="id_add_sound_effect" type="id"/>
+</resources>

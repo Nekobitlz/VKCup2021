@@ -5,4 +5,9 @@
     <string name="record_hint">Удерживайте, чтобы начать запись</string>
     <string name="your_voice">Ваше голосовое</string>
     <string name="error_audio_rec">Не удалось записать голосовое сообщение</string>
+    <string name="noise_suppression_not_supported">Удаление шума не поддерживается на вашем устройстве</string>
+    <string name="editor_title">Действия</string>
+    <string name="remove_noise">Удалить фоновый шум</string>
+    <string name="add_robotic_voice">Добавить эффект «‎робовойс»</string>
+    <string name="add_sound_effect">Добавить звуковой эффект</string>
 </resources>

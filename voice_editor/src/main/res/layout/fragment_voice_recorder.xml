@@ -26,7 +26,7 @@
         android:background="?selectableItemBackground"
         android:padding="14dp"
         android:text="@string/record_new"
-        android:textColor="@color/record_button_activated"
+        android:textColor="@color/record_purple_color"
         android:textSize="15sp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
