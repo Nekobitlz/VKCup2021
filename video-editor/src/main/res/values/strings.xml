@@ -5,4 +5,5 @@
     <string name="welcome_title">Видео для редактирования</string>
     <string name="pick_video">Выбрать видео</string>
     <string name="choose_video">Выберите видео</string>
+    <string name="save">Сохранить</string>
 </resources>

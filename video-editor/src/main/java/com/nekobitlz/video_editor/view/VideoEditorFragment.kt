@@ -18,6 +18,12 @@ class VideoEditorFragment : Fragment(R.layout.fragment_video_editor) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentVideoEditorBinding.bind(view)
         val uri = arguments?.getParcelable(PARAM_VIDEO_URI) as Uri?
+        binding.toolbar.setNavigationOnClickListener {
+            activity?.onBackPressed()
+        }
+        binding.toolbar.findViewById<View>(R.id.btn_save).setOnClickListener {
+            activity?.onBackPressed()
+        }
         binding.videoView.apply {
             setVideoURI(uri)
             setMediaController(null)
