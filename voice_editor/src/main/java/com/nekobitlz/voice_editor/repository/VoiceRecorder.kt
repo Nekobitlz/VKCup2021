@@ -8,6 +8,7 @@ import android.os.Looper
 import com.nekobitlz.voice_editor.utils.VoiceLogger.logDebug
 import java.io.File
 import java.io.IOException
+import java.lang.RuntimeException
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.log10
@@ -95,10 +96,15 @@ class VoiceRecorder(private val context: Context) {
     }
 
     fun stopRecording() {
-        recorder?.stop()
-        recorder?.reset()
-        recorder?.release()
-        recorder = null
+        try {
+            recorder?.stop()
+        } catch (e: RuntimeException) {
+            // workaround because we can't check recording status
+        } finally {
+            recorder?.reset()
+            recorder?.release()
+            recorder = null
+        }
     }
 
     private fun getFilename(): String {

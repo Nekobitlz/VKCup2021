@@ -38,10 +38,12 @@ class VoiceRecorderViewModel(application: Application) : AndroidViewModel(applic
                 _state.value = VoiceRecorderState.Error
             }
         } else if (_state.value is VoiceRecorderState.Recorded) {
-            _openEditorEvent.value = OpenPhotoEditorEvent(
-                voiceRecorder.currentFileName ?: return,
-                voiceRecorder.audioWave.toIntArray()
-            )
+            if (voiceRecorder.audioWave.isNotEmpty()) {
+                _openEditorEvent.value = OpenPhotoEditorEvent(
+                    voiceRecorder.currentFileName ?: return,
+                    voiceRecorder.audioWave.toIntArray()
+                )
+            }
         }
     }
 
