@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -39,6 +40,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <ProgressBar
+            android:id="@+id/map_progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageButton
@@ -63,6 +74,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:behavior_hideable="false"
-        app:behavior_peekHeight="@dimen/pick_city_view_height"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        tools:behavior_peekHeight="@dimen/pick_city_view_height" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

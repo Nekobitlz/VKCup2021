@@ -1,12 +1,10 @@
 package com.nekobitlz.taxi.viewmodel
 
 import android.app.Application
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.nekobitlz.taxi.R
 import com.nekobitlz.taxi.data.StreetMap
 import com.nekobitlz.taxi.repository.RetrofitService
@@ -20,6 +18,10 @@ import org.osmdroid.bonuspack.routing.Road
 import org.osmdroid.bonuspack.routing.RoadManager
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Polyline
+import kotlin.math.roundToInt
+
+private const val PRICE_FOR_MINUTE = 10
+private const val MIN_PRICE = 80
 
 class TaxiViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -51,7 +53,10 @@ class TaxiViewModel(application: Application) : AndroidViewModel(application) {
                 val addressTo = _addressToState.value
                 if (addressTo is AddressState.Success) {
                     val map = addressTo.map
-                    buildRoad(GeoPoint(lat, lon), GeoPoint(map.lat!!.toDouble(), map.lon!!.toDouble()))
+                    buildRoad(
+                        GeoPoint(lat, lon),
+                        GeoPoint(map.lat!!.toDouble(), map.lon!!.toDouble())
+                    )
                 }
             }, {
                 _addressFromState.value = AddressState.Error(it)
@@ -79,8 +84,9 @@ class TaxiViewModel(application: Application) : AndroidViewModel(application) {
         buildRoad(mapCenter, endPoint)
     }
 
-    fun buildRoad(mapCenter: GeoPoint, endPoint: GeoPoint) {
+    private fun buildRoad(mapCenter: GeoPoint, endPoint: GeoPoint) {
         Observable.fromCallable {
+            _buildRoadEvent.postValue(BuildRoadState.Loading)
             val waypoints = ArrayList<GeoPoint>()
             waypoints.add(mapCenter)
             waypoints.add(endPoint)
@@ -89,15 +95,19 @@ class TaxiViewModel(application: Application) : AndroidViewModel(application) {
             if (road.mStatus != Road.STATUS_OK) {
                 _buildRoadEvent.postValue(BuildRoadState.Error)
             }
+            val price = maxOf((road.mDuration / 60 * PRICE_FOR_MINUTE).roundToInt(), MIN_PRICE)
             return@fromCallable RoadManager.buildRoadOverlay(
                 road,
                 ContextCompat.getColor(getApplication(), R.color.purple_color),
                 10.0f
-            )
+            ) to price
         }.subscribeOn(Schedulers.io())
-            .subscribe {
-                _buildRoadEvent.postValue(BuildRoadState.Success(it))
-            }
+            .map { BuildRoadState.Success(it.first, it.second) }
+            .subscribe({
+                _buildRoadEvent.postValue(it)
+            }, {
+                _buildRoadEvent.postValue(BuildRoadState.Error)
+            })
     }
 }
 
@@ -115,6 +125,6 @@ sealed class AddressSearchState {
 
 sealed class BuildRoadState {
     object Loading : BuildRoadState()
-    class Success(val polyline: Polyline) : BuildRoadState()
+    data class Success(val polyline: Polyline, val price: Int) : BuildRoadState()
     object Error : BuildRoadState()
 }

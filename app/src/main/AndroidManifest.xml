@@ -5,8 +5,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:name=".App"
@@ -26,7 +26,10 @@
             android:name="com.nekobitlz.news_tinder.NewsTinderActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait" />
-        <activity android:name="com.nekobitlz.voice_editor.VoiceEditorActivity" />
+        <activity
+            android:name="com.nekobitlz.voice_editor.VoiceEditorActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait" />
         <activity android:name="com.nekobitlz.taxi.TaxiActivity" />
     </application>
 

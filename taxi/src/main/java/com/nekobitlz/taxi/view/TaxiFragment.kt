@@ -86,18 +86,24 @@ class TaxiFragment : Fragment(R.layout.fragment_taxi), LocationListener {
                         STATE_EXPANDED -> {
                             appBar.visible()
                             btnCurrentLocation.gone()
+                            pickCityView.btnAction.gone()
                         }
                         STATE_COLLAPSED -> {
                             appBar.gone()
                             btnCurrentLocation.visible()
                             pickCityView.etTo.clearFocus()
-                            pickCityView.etFrom.clearFocus()
+                            if (mapContainsRoad()) {
+                                pickCityView.btnAction.visible()
+                            }
                         }
                     }
                 }
 
                 override fun onSlide(view: View, v: Float) {}
             })
+            pickCityView.btnAction.setOnClickListener {
+                Toast.makeText(context, R.string.success_deliver, Toast.LENGTH_SHORT).show()
+            }
             toolbar.setNavigationOnClickListener {
                 sheetBehaviour.state = STATE_COLLAPSED
             }
@@ -183,43 +189,65 @@ class TaxiFragment : Fragment(R.layout.fragment_taxi), LocationListener {
         })
         viewModel.buildRoadEvent.observe(viewLifecycleOwner) {
             when (it) {
-                BuildRoadState.Error -> Toast.makeText(
-                    requireContext(),
-                    getString(R.string.build_road_error),
-                    Toast.LENGTH_SHORT
-                ).show()
+                BuildRoadState.Error -> {
+                    binding.mapProgressBar.gone()
+                    binding.chooseAddrssesBottomSheet.pickCityView.btnAction.gone()
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.build_road_error),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
                 is BuildRoadState.Success -> {
-                    binding.mapView.overlays.apply {
-                        clear()
-                        add(it.polyline)
+                    binding.apply {
+                        mapView.overlays.apply {
+                            clear()
+                            add(it.polyline)
+                        }
+                        chooseAddrssesBottomSheet.pickCityView.btnAction.apply {
+                            text = getString(R.string.deliver_with_price, it.price)
+                            doOnLayout {
+                                sheetBehaviour.setPeekHeight(
+                                    chooseAddrssesBottomSheet.root.getChildAt(1).bottom
+                                )
+                            }
+                            visible()
+
+                        }
+                        mapProgressBar.gone()
                     }
+                }
+                BuildRoadState.Loading -> {
+                    binding.chooseAddrssesBottomSheet.pickCityView.btnAction.gone()
+                    binding.mapProgressBar.visible()
                 }
             }
 
         }
-        viewModel.searchState.observe(viewLifecycleOwner, {
-            when (it) {
-                AddressSearchState.Loading -> {
-                    binding.chooseAddrssesBottomSheet.apply {
-                        progressBar.visible()
-                        rvAddresses.gone()
+        viewModel.searchState.observe(viewLifecycleOwner,
+            {
+                when (it) {
+                    AddressSearchState.Loading -> {
+                        binding.chooseAddrssesBottomSheet.apply {
+                            progressBar.visible()
+                            rvAddresses.gone()
+                        }
+                    }
+                    is AddressSearchState.Success -> {
+                        binding.chooseAddrssesBottomSheet.apply {
+                            progressBar.gone()
+                            rvAddresses.visible()
+                            adapter.submitList(it.addresses)
+                        }
+                    }
+                    is AddressSearchState.Error -> {
+                        binding.chooseAddrssesBottomSheet.apply {
+                            progressBar.gone()
+                            rvAddresses.gone()
+                        }
                     }
                 }
-                is AddressSearchState.Success -> {
-                    binding.chooseAddrssesBottomSheet.apply {
-                        progressBar.gone()
-                        rvAddresses.visible()
-                        adapter.submitList(it.addresses)
-                    }
-                }
-                is AddressSearchState.Error -> {
-                    binding.chooseAddrssesBottomSheet.apply {
-                        progressBar.gone()
-                        rvAddresses.gone()
-                    }
-                }
-            }
-        })
+            })
         return viewModel
     }
 
@@ -272,6 +300,8 @@ class TaxiFragment : Fragment(R.layout.fragment_taxi), LocationListener {
             }
         }
     }
+
+    private fun mapContainsRoad() = binding.mapView.overlays.isNotEmpty()
 
     private fun subscribeToSearch(editText: EditText) {
         editText.textChangeEvents()

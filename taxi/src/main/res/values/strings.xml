@@ -3,4 +3,6 @@
     <string name="et_to_hint">Куда поедем?</string>
     <string name="no_permission_error">Вы должны предоставить все необходимые разрешения</string>
     <string name="build_road_error">Ошибка при построении маршрута</string>
+    <string name="deliver_with_price">Заказать за %1$d₽</string>
+    <string name="success_deliver">Вы успешно заказали такси!</string>
 </resources>

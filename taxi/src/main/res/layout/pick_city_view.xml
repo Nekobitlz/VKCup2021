@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/pick_city_view_height"
+    android:layout_height="wrap_content"
     android:background="@drawable/rounded_rect_16"
     android:elevation="2dp"
     android:padding="16dp">
@@ -71,9 +71,27 @@
         android:textColor="@color/colorPrimaryText"
         android:textColorHint="@color/colorGreyDark"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btn_action"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/iv_from"
         app:layout_constraintTop_toBottomOf="@id/et_from" />
+
+    <Button
+        android:id="@+id/btn_action"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:background="@drawable/rounded_rect_16"
+        android:backgroundTint="@color/purple_color"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:textSize="17sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_to"
+        tools:text="Готово"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
