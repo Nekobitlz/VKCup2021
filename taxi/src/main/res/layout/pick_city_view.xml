@@ -40,6 +40,7 @@
         android:id="@+id/progress_bar_from"
         android:layout_width="30dp"
         android:layout_height="30dp"
+        android:indeterminateTint="@color/colorBlue"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/et_from"
         app:layout_constraintEnd_toEndOf="@id/et_from"

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingVertical="12dp"
+    tools:background="@color/colorBlack">
+
+    <ImageButton
+        android:id="@+id/btn_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@drawable/round_with_stroke"
+        android:contentDescription="@null"
+        android:padding="8dp"
+        android:src="@drawable/ic_time"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btn_effect"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btn_effect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@drawable/round_with_stroke"
+        android:contentDescription="@null"
+        android:padding="8dp"
+        android:src="@drawable/ic_effect"
+        app:layout_constraintBottom_toBottomOf="@id/btn_time"
+        app:layout_constraintEnd_toStartOf="@id/btn_stickers"
+        app:layout_constraintStart_toEndOf="@id/btn_time"
+        app:layout_constraintTop_toTopOf="@id/btn_time" />
+
+    <ImageButton
+        android:id="@+id/btn_stickers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@drawable/round_with_stroke"
+        android:contentDescription="@null"
+        android:padding="8dp"
+        android:src="@drawable/ic_stickers"
+        app:layout_constraintBottom_toBottomOf="@id/btn_time"
+        app:layout_constraintEnd_toStartOf="@id/btn_music"
+        app:layout_constraintStart_toEndOf="@id/btn_effect"
+        app:layout_constraintTop_toTopOf="@id/btn_time" />
+
+    <ImageButton
+        android:id="@+id/btn_music"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@drawable/round_with_stroke"
+        android:contentDescription="@null"
+        android:padding="8dp"
+        android:src="@drawable/ic_music"
+        app:layout_constraintBottom_toBottomOf="@id/btn_time"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btn_stickers"
+        app:layout_constraintTop_toTopOf="@id/btn_time" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

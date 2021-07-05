@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.VKCup2021" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.VKCup2021" parent="Theme.Design.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/colorBlue</item>
         <item name="colorPrimaryVariant">@color/colorAccent</item>

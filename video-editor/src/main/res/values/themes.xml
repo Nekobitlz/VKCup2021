@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.VoiceEditor" parent="Theme.Design.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/colorWhite</item>
+        <item name="colorPrimaryVariant">@color/colorAccent</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/colorBlue</item>
+        <item name="colorSecondaryVariant">@color/colorGrey</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="m">@color/welcome_background_grey</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+    </style>
+</resources>

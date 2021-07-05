@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.nekobitlz.news_tinder.NewsTinderActivity
 import com.nekobitlz.taxi.TaxiActivity
+import com.nekobitlz.video_editor.VideoEditorActivity
 import com.nekobitlz.vkcup.databinding.ActivityMainBinding
 import com.nekobitlz.voice_editor.VoiceEditorActivity
 import com.vk.api.sdk.VK
@@ -32,6 +33,9 @@ class MainActivity : AppCompatActivity() {
         }
         binding.toVoiceEditor.setOnClickListener {
             toVoiceEditor()
+        }
+        binding.toVideoEditor.setOnClickListener {
+            toVideoEditor()
         }
     }
 
@@ -62,6 +66,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun toTaxi() {
         val myIntent = Intent(this@MainActivity, TaxiActivity::class.java)
+        startActivity(myIntent)
+    }
+
+    private fun toVideoEditor() {
+        val myIntent = Intent(this@MainActivity, VideoEditorActivity::class.java)
         startActivity(myIntent)
     }
 }

@@ -37,6 +37,7 @@ android {
 
 dependencies {
     implementation project(":news-tinder")
+    implementation project(":video-editor")
     implementation project(":voice_editor")
     implementation project(":taxi")
 

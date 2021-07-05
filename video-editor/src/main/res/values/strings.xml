@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="video_editor">Видеоредактор</string>
+    <string name="welcome_subtitle">Выберите или снимите видео, которое хотите отредактировать</string>
+    <string name="welcome_title">Видео для редактирования</string>
+    <string name="pick_video">Выбрать видео</string>
+    <string name="choose_video">Выберите видео</string>
+</resources>
