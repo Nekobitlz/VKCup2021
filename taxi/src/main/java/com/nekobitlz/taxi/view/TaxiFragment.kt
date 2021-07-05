@@ -1,6 +1,7 @@
 package com.nekobitlz.taxi.view
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
@@ -12,9 +13,16 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.nekobitlz.taxi.R
 import com.nekobitlz.taxi.databinding.FragmentTaxiBinding
+import com.nekobitlz.vkcup.commons.gone
+import com.nekobitlz.vkcup.commons.visible
 import org.osmdroid.api.IMapController
+import org.osmdroid.events.DelayedMapListener
+import org.osmdroid.events.MapListener
+import org.osmdroid.events.ScrollEvent
+import org.osmdroid.events.ZoomEvent
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
@@ -33,15 +41,53 @@ class TaxiFragment : Fragment(R.layout.fragment_taxi), LocationListener {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentTaxiBinding.bind(view)
 
-        locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val viewModel = ViewModelProvider(this).get(TaxiViewModel::class.java)
+        viewModel.state.observe(viewLifecycleOwner, {
+            when (it) {
+                AddressFromState.Loading -> {
+                    binding.pickCityView.apply {
+                        etFrom.setText("")
+                        progressBarFrom.visible()
+                    }
+                }
+                is AddressFromState.Success -> {
+                    binding.pickCityView.apply {
+                        etFrom.setText(it.address)
+                        progressBarFrom.gone()
+                    }
+                }
+                is AddressFromState.Error -> {
+                    binding.pickCityView.apply {
+                        etFrom.setText("Ошибка")
+                        progressBarFrom.gone()
+                    }
+                }
+            }
+        })
+
+        locationManager =
+            requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         requestLocation()
 
         binding.mapView.apply {
             setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE)
+            setMultiTouchControls(true)
             zoomController.setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT)
             mapController = controller
+            addMapListener(DelayedMapListener(object : MapListener {
+                override fun onZoom(e: ZoomEvent): Boolean {
+                    return true
+                }
+
+                override fun onScroll(e: ScrollEvent): Boolean {
+                    val geoPoint = MOSCOW_CENTER_LOCATION
+                    getMapCenter(geoPoint)
+                    viewModel.getAddress(geoPoint.latitude, geoPoint.longitude)
+                    return true
+                }
+            }, 1000))
         }
-        mapController.setZoom(20.0)
+        mapController.setZoom(ZOOM_LEVEL)
         mapController.setCenter(MOSCOW_CENTER_LOCATION)
 
         binding.btnCurrentLocation.setOnClickListener {
@@ -49,6 +95,7 @@ class TaxiFragment : Fragment(R.layout.fragment_taxi), LocationListener {
         }
     }
 
+    @SuppressLint("MissingPermission")
     private fun requestLocation() {
         if (ActivityCompat.checkSelfPermission(
                 requireActivity(),
@@ -71,6 +118,7 @@ class TaxiFragment : Fragment(R.layout.fragment_taxi), LocationListener {
         }
     }
 
+    @SuppressLint("MissingPermission")
     override fun onLocationChanged(location: Location) {
         val center = GeoPoint(location.latitude, location.longitude)
         mapController.animateTo(center)
@@ -99,6 +147,7 @@ class TaxiFragment : Fragment(R.layout.fragment_taxi), LocationListener {
 
     companion object {
         private const val REQUEST_PERMISSION = 101
+        private const val ZOOM_LEVEL = 20.0
         private val MOSCOW_CENTER_LOCATION = GeoPoint(55.751244, 37.618423)
     }
 }
