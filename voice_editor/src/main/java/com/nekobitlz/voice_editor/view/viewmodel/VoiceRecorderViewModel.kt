@@ -22,6 +22,12 @@ class VoiceRecorderViewModel(application: Application) : AndroidViewModel(applic
     val openEditorEvent: LiveData<OpenPhotoEditorEvent>
         get() = _openEditorEvent
 
+    private val _updateTimerEvent = MutableLiveData<String>()
+    val updateTimerEvent: LiveData<String>
+        get() = _updateTimerEvent
+
+    private var startTime: Long = 0
+
     fun onButtonUp() {
         if (_state.value is VoiceRecorderState.Recording) {
             voiceRecorder.stopRecording()
@@ -53,6 +59,18 @@ class VoiceRecorderViewModel(application: Application) : AndroidViewModel(applic
 
     fun onNewRecordRequest() {
         _state.value = VoiceRecorderState.Start
+    }
+
+    fun onNextTime() {
+        val millis: Long = System.currentTimeMillis() - startTime
+        var seconds = (millis / 1000).toInt()
+        val minutes = seconds / 60
+        seconds %= 60
+        _updateTimerEvent.value = String.format("%d:%02d", minutes, seconds)
+    }
+
+    fun onStartTimer() {
+        startTime = System.currentTimeMillis()
     }
 }
 

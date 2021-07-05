@@ -29,15 +29,10 @@ class VoiceRecorderFragment : Fragment(R.layout.fragment_voice_recorder) {
 
     private lateinit var viewModel: VoiceRecorderViewModel
 
-    private var startTime: Long = 0
     private val timerHandler: Handler = Handler(Looper.myLooper()!!)
     private val timer: Runnable = object : Runnable {
         override fun run() {
-            val millis: Long = System.currentTimeMillis() - startTime
-            var seconds = (millis / 1000).toInt()
-            val minutes = seconds / 60
-            seconds %= 60
-            binding.tvTimer.text = String.format("%d:%02d", minutes, seconds)
+            viewModel.onNextTime()
             timerHandler.postDelayed(this, 500)
         }
     }
@@ -55,6 +50,9 @@ class VoiceRecorderFragment : Fragment(R.layout.fragment_voice_recorder) {
                         .show()
                 }
             }
+        })
+        viewModel.updateTimerEvent.observe(viewLifecycleOwner, {
+            binding.tvTimer.text = it
         })
         viewModel.openEditorEvent.observe(viewLifecycleOwner, {
             parentFragmentManager.beginTransaction()
@@ -99,7 +97,6 @@ class VoiceRecorderFragment : Fragment(R.layout.fragment_voice_recorder) {
                     v.scaleY = 1.25f
                 }
             }
-
         }
     }
 
@@ -199,7 +196,7 @@ class VoiceRecorderFragment : Fragment(R.layout.fragment_voice_recorder) {
     }
 
     private fun startTimer() {
-        startTime = System.currentTimeMillis()
+        viewModel.onStartTimer()
         timerHandler.postDelayed(timer, 0)
         binding.tvTimer.visible()
         binding.tvRecordHint.gone()
