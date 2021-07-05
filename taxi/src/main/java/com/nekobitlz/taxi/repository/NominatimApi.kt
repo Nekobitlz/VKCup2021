@@ -14,7 +14,10 @@ interface NominatimApi {
     fun getResponseUrl(@Url url: String?): Single<List<StreetMap>>
 
     @GET("/search")
-    fun search(@Query("q") query: String, @Query("format") format: String): Single<List<StreetMap>>
+    fun search(@Query("q") query: String,
+               @Query("format") format: String = "json",
+               @Query("addressdetails") addressDetails: Int = 1,
+               @Query("accept-language") language: String = "ru"): Single<List<StreetMap>>
 
     @GET("/reverse")
     fun getAddress(
@@ -23,5 +26,6 @@ interface NominatimApi {
         @Query("zoom") zoom: Int = 20,
         @Query("format") format: String = "json",
         @Query("addressdetails") addressDetails: Int = 1,
+        @Query("accept-language") language: String = "ru",
     ): Single<StreetMap>
 }

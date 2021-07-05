@@ -24,4 +24,8 @@ class RetrofitService {
     fun getAddress(lat: Double, lon: Double): Single<StreetMap> {
         return nominatimApi.getAddress(lat, lon)
     }
+
+    fun search(query: String): Single<List<StreetMap>> {
+        return nominatimApi.search(query)
+    }
 }

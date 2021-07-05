@@ -10,14 +10,25 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.*
+import com.jakewharton.rxbinding4.widget.TextViewTextChangeEvent
+import com.jakewharton.rxbinding4.widget.textChangeEvents
 import com.nekobitlz.taxi.R
 import com.nekobitlz.taxi.databinding.FragmentTaxiBinding
+import com.nekobitlz.taxi.view.adapter.ChooseAddressAdapter
 import com.nekobitlz.vkcup.commons.gone
 import com.nekobitlz.vkcup.commons.visible
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import org.osmdroid.api.IMapController
 import org.osmdroid.events.DelayedMapListener
 import org.osmdroid.events.MapListener
@@ -26,6 +37,7 @@ import org.osmdroid.events.ZoomEvent
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
+import java.util.concurrent.TimeUnit
 
 
 class TaxiFragment : Fragment(R.layout.fragment_taxi), LocationListener {
@@ -35,38 +47,72 @@ class TaxiFragment : Fragment(R.layout.fragment_taxi), LocationListener {
         get() = _binding!!
 
     private var locationManager: LocationManager? = null
+    private lateinit var viewModel: TaxiViewModel
     private lateinit var mapController: IMapController
+
+    private val adapter = ChooseAddressAdapter()
+    private lateinit var sheetBehaviour: BottomSheetBehavior<LinearLayout>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentTaxiBinding.bind(view)
 
-        val viewModel = ViewModelProvider(this).get(TaxiViewModel::class.java)
-        viewModel.state.observe(viewLifecycleOwner, {
-            when (it) {
-                AddressFromState.Loading -> {
-                    binding.pickCityView.apply {
-                        etFrom.setText("")
-                        progressBarFrom.visible()
-                    }
-                }
-                is AddressFromState.Success -> {
-                    binding.pickCityView.apply {
-                        etFrom.setText(it.address)
-                        progressBarFrom.gone()
-                    }
-                }
-                is AddressFromState.Error -> {
-                    binding.pickCityView.apply {
-                        etFrom.setText("Ошибка")
-                        progressBarFrom.gone()
-                    }
-                }
+        initViewModel()
+        initMap()
+        initBottomSheet()
+        binding.apply {
+            btnCurrentLocation.setOnClickListener {
+                requestLocation()
             }
-        })
+        }
+    }
 
-        locationManager =
-            requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    private fun initBottomSheet() = with(binding) {
+        sheetBehaviour = BottomSheetBehavior.from(chooseAddrssesBottomSheet.root)
+        chooseAddrssesBottomSheet.apply {
+            root.doOnLayout {
+                val showing: View = (it as ViewGroup).getChildAt(1)
+                sheetBehaviour.setPeekHeight(showing.bottom)
+            }
+            sheetBehaviour.addBottomSheetCallback(object : BottomSheetCallback() {
+                override fun onStateChanged(view: View, newState: Int) {
+                    when (newState) {
+                        STATE_EXPANDED -> {
+                            appBar.visible()
+                            btnCurrentLocation.gone()
+                        }
+                        STATE_COLLAPSED -> {
+                            appBar.gone()
+                            btnCurrentLocation.visible()
+                            pickCityView.etTo.clearFocus()
+                            pickCityView.etFrom.clearFocus()
+                        }
+                    }
+                }
+
+                override fun onSlide(view: View, v: Float) {}
+            })
+            toolbar.setNavigationOnClickListener {
+                sheetBehaviour.state = STATE_COLLAPSED
+            }
+            rvAddresses.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = this@TaxiFragment.adapter
+            }
+            pickCityView.etFrom.setOnFocusChangeListener { v, hasFocus ->
+                if (hasFocus) sheetBehaviour.state = STATE_EXPANDED
+            }
+            pickCityView.etTo.setOnFocusChangeListener { v, hasFocus ->
+                if (hasFocus) sheetBehaviour.state = STATE_EXPANDED
+            }
+            subscribeToSearch(pickCityView.etFrom)
+            subscribeToSearch(pickCityView.etTo)
+        }
+    }
+
+    private fun initMap() {
+        locationManager = requireActivity()
+            .getSystemService(Context.LOCATION_SERVICE) as LocationManager
         requestLocation()
 
         binding.mapView.apply {
@@ -89,10 +135,56 @@ class TaxiFragment : Fragment(R.layout.fragment_taxi), LocationListener {
         }
         mapController.setZoom(ZOOM_LEVEL)
         mapController.setCenter(MOSCOW_CENTER_LOCATION)
+    }
 
-        binding.btnCurrentLocation.setOnClickListener {
-            requestLocation()
-        }
+    private fun initViewModel(): TaxiViewModel {
+        viewModel = ViewModelProvider(this).get(TaxiViewModel::class.java)
+        viewModel.addressFromState.observe(viewLifecycleOwner, {
+            when (it) {
+                AddressFromState.Loading -> {
+                    binding.chooseAddrssesBottomSheet.pickCityView.apply {
+                        etFrom.setText("")
+                        progressBarFrom.visible()
+                    }
+                }
+                is AddressFromState.Success -> {
+                    binding.chooseAddrssesBottomSheet.pickCityView.apply {
+                        etFrom.setText(it.address)
+                        progressBarFrom.gone()
+                    }
+                }
+                is AddressFromState.Error -> {
+                    binding.chooseAddrssesBottomSheet.pickCityView.apply {
+                        etFrom.setText("Ошибка")
+                        progressBarFrom.gone()
+                    }
+                }
+            }
+        })
+        viewModel.searchState.observe(viewLifecycleOwner, {
+            when (it) {
+                AddressSearchState.Loading -> {
+                    binding.chooseAddrssesBottomSheet.apply {
+                        progressBar.visible()
+                        rvAddresses.gone()
+                    }
+                }
+                is AddressSearchState.Success -> {
+                    binding.chooseAddrssesBottomSheet.apply {
+                        progressBar.gone()
+                        rvAddresses.visible()
+                        adapter.submitList(it.addresses)
+                    }
+                }
+                is AddressSearchState.Error -> {
+                    binding.chooseAddrssesBottomSheet.apply {
+                        progressBar.gone()
+                        rvAddresses.gone()
+                    }
+                }
+            }
+        })
+        return viewModel
     }
 
     @SuppressLint("MissingPermission")
@@ -143,6 +235,18 @@ class TaxiFragment : Fragment(R.layout.fragment_taxi), LocationListener {
                 return
             }
         }
+    }
+
+    private fun subscribeToSearch(editText: EditText) {
+        editText.textChangeEvents()
+            .skipInitialValue()
+            .distinctUntilChanged()
+            .debounce(200, TimeUnit.MILLISECONDS)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { event: TextViewTextChangeEvent? ->
+                val text = event?.text
+                viewModel.search(text.toString())
+            }
     }
 
     companion object {
