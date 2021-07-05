@@ -26,6 +26,10 @@ import com.jakewharton.rxbinding4.widget.textChangeEvents
 import com.nekobitlz.taxi.R
 import com.nekobitlz.taxi.databinding.FragmentTaxiBinding
 import com.nekobitlz.taxi.view.adapter.ChooseAddressAdapter
+import com.nekobitlz.taxi.viewmodel.AddressSearchState
+import com.nekobitlz.taxi.viewmodel.AddressState
+import com.nekobitlz.taxi.viewmodel.BuildRoadState
+import com.nekobitlz.taxi.viewmodel.TaxiViewModel
 import com.nekobitlz.vkcup.commons.gone
 import com.nekobitlz.vkcup.commons.visible
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -50,7 +54,9 @@ class TaxiFragment : Fragment(R.layout.fragment_taxi), LocationListener {
     private lateinit var viewModel: TaxiViewModel
     private lateinit var mapController: IMapController
 
-    private val adapter = ChooseAddressAdapter()
+    private val adapter = ChooseAddressAdapter(onClick = {
+        viewModel.onAddressSelect(it, binding.mapView.mapCenter as GeoPoint)
+    })
     private lateinit var sheetBehaviour: BottomSheetBehavior<LinearLayout>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -105,7 +111,6 @@ class TaxiFragment : Fragment(R.layout.fragment_taxi), LocationListener {
             pickCityView.etTo.setOnFocusChangeListener { v, hasFocus ->
                 if (hasFocus) sheetBehaviour.state = STATE_EXPANDED
             }
-            subscribeToSearch(pickCityView.etFrom)
             subscribeToSearch(pickCityView.etTo)
         }
     }
@@ -141,19 +146,19 @@ class TaxiFragment : Fragment(R.layout.fragment_taxi), LocationListener {
         viewModel = ViewModelProvider(this).get(TaxiViewModel::class.java)
         viewModel.addressFromState.observe(viewLifecycleOwner, {
             when (it) {
-                AddressFromState.Loading -> {
+                AddressState.Loading -> {
                     binding.chooseAddrssesBottomSheet.pickCityView.apply {
                         etFrom.setText("")
                         progressBarFrom.visible()
                     }
                 }
-                is AddressFromState.Success -> {
+                is AddressState.Success -> {
                     binding.chooseAddrssesBottomSheet.pickCityView.apply {
                         etFrom.setText(it.address)
                         progressBarFrom.gone()
                     }
                 }
-                is AddressFromState.Error -> {
+                is AddressState.Error -> {
                     binding.chooseAddrssesBottomSheet.pickCityView.apply {
                         etFrom.setText("Ошибка")
                         progressBarFrom.gone()
@@ -161,6 +166,37 @@ class TaxiFragment : Fragment(R.layout.fragment_taxi), LocationListener {
                 }
             }
         })
+        viewModel.addressToState.observe(viewLifecycleOwner, {
+            when (it) {
+                is AddressState.Success -> {
+                    binding.apply {
+                        chooseAddrssesBottomSheet.pickCityView.etTo.setText(it.address)
+                        sheetBehaviour.state = STATE_COLLAPSED
+                    }
+                }
+                is AddressState.Error -> {
+                    binding.chooseAddrssesBottomSheet.pickCityView.apply {
+                        etTo.setText("Ошибка")
+                    }
+                }
+            }
+        })
+        viewModel.buildRoadEvent.observe(viewLifecycleOwner) {
+            when (it) {
+                BuildRoadState.Error -> Toast.makeText(
+                    requireContext(),
+                    getString(R.string.build_road_error),
+                    Toast.LENGTH_SHORT
+                ).show()
+                is BuildRoadState.Success -> {
+                    binding.mapView.overlays.apply {
+                        clear()
+                        add(it.polyline)
+                    }
+                }
+            }
+
+        }
         viewModel.searchState.observe(viewLifecycleOwner, {
             when (it) {
                 AddressSearchState.Loading -> {

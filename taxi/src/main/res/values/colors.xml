@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="transparent_stroke_color">#1F000000</color>
+    <color name="purple_color">#735CE5</color>
 </resources>

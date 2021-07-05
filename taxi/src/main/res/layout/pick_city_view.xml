@@ -24,16 +24,17 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_rect_10"
+        android:focusable="false"
         android:inputType="text"
         android:padding="12dp"
-        android:text="Тверская, 14"
         android:textColor="@color/colorPrimaryText"
         android:textColorHint="@color/colorGreyDark"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@id/et_to"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/iv_from"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Тверская, 14" />
 
     <ProgressBar
         android:id="@+id/progress_bar_from"

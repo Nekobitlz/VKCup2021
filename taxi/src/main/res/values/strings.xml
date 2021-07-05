@@ -2,4 +2,5 @@
 <resources>
     <string name="et_to_hint">Куда поедем?</string>
     <string name="no_permission_error">Вы должны предоставить все необходимые разрешения</string>
+    <string name="build_road_error">Ошибка при построении маршрута</string>
 </resources>
